@@ -1,0 +1,76 @@
+(define empty?
+   (lambda (lst)
+      (if (eq? lst '()) #t #f)
+  )
+)
+
+(define list?
+   (lambda (lst)
+      (if (empty? lst) #t (if (pair? lst) (list? (cdr lst)) #f))
+  )
+)
+
+(define equal-whatever?
+   (lambda (x y)
+      (if (list? x)
+          (if (list? y)
+              (if (empty? x)
+                  (if (empty? y)
+                      #t
+                      #f
+                  )
+                  (if (empty? y)
+                      #f
+                      (and (equal-whatever? (car x) (car y)) (equal-whatever? (cdr x) (cdr y)))
+                  )
+              )
+              #f
+          )
+          (if (list? y)
+              #f
+              (eq? x y)
+          )
+      )
+   )
+)
+(define equal-list?
+   (lambda (lst1 lst2)
+      (if (and (list? lst1) (list? lst2))
+          (equal-whatever? lst1 lst2)
+          #f
+   ))
+)
+      
+(define append
+   (lambda (lst1 lst2)
+      (if (and (list? lst1) (list? lst2))
+          (if (empty? lst1)
+              lst2
+              (cons (car lst1) (append (cdr lst1) lst2))
+          )
+          '()
+      )
+   )
+ )
+
+ (define append3
+   (lambda (lst1 lst2 num)
+     (append (append lst1 lst2) (list num))
+   )
+ )
+
+ (define compute
+   (lambda (lst)
+     (if (equal-list? lst '(1))
+         '()
+         (append (list (+ (car lst) (car (cdr lst)))) (compute (cdr lst))))))
+
+ (define pascal
+   (lambda (num)
+     (if (< num 1)
+         '()
+         (if (= num 1)
+             (list 1)
+             (if (= num 2)
+                 '(1 1)
+                 (append3 (list 1) (compute (pascal (- num 1))) 1))))))
